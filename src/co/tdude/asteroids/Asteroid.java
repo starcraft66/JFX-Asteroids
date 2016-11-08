@@ -8,6 +8,6 @@ import javafx.scene.image.Image;
 public class Asteroid extends Sprite {
     public Asteroid() {
         super();
-        this.setImage(new Image("file:///Users/tristan/Documents/java/Asteroids/assets/asteroid.png"));
+        this.setImage(new Image("file:assets/asteroid.png"));
     }
 }

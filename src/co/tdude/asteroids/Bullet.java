@@ -8,7 +8,7 @@ public class Bullet extends Sprite {
 
     public Bullet() {
         super();
-        this.setImage("file:///Users/tristan/Documents/java/Asteroids/assets/bullet.png");
+        this.setImage("file:assets/bullet.png");
     }
 
     public double getRotation() {

@@ -8,7 +8,7 @@ public class Spaceship extends Sprite {
 
     public Spaceship() {
         super();
-        this.setImage("file:///Users/tristan/Documents/java/Asteroids/assets/ship.png");
+        this.setImage("file:assets/ship.png");
     }
 
     public double getRotation() {
