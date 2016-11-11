@@ -7,9 +7,15 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,11 +34,15 @@ public class Main extends Application {
     static CopyOnWriteArrayList<Bullet> bullets;
 
     static Spaceship spaceship;
-    static double SPACESHIPACCELL = 150.0;
+    static double SPACESHIPACCELL = 175.0;
     static double TURNRATE = 4.0;
 
     private static long lastLoop;
     private static long lastShoot;
+
+    private MediaPlayer mediaPlayer;
+
+    public static int lives;
 
     @Override
     public void start(Stage theStage) throws Exception{
@@ -48,6 +58,7 @@ public class Main extends Application {
         graphicsContext = canvas.getGraphicsContext2D();
 
         lastShoot = 0;
+        lives = 3;
 
         //Handle currentlyActiveKeys
 
@@ -100,6 +111,13 @@ public class Main extends Application {
             }
         }.start();
 
+        String musicFile = "assets/music.mp3";     // For example
+
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setVolume(0.50f);
+        mediaPlayer.play();
+
         theStage.show();
     }
 
@@ -107,6 +125,8 @@ public class Main extends Application {
     {
         // clear canvas
         graphicsContext.clearRect(0, 0, WIDTH, HEIGHT);
+        //Render background
+        graphicsContext.drawImage(new Image("file:assets/bg.jpg"), 0, 0);
 
         for (Asteroid a : asteroids) {
             a.update(time);
@@ -151,8 +171,8 @@ public class Main extends Application {
                 Bullet b = new Bullet();
                 b.setRotation(spaceship.getRotation());
                 b.setPosition(x + spaceship.getBoundary().getMinX() + (spaceship.getBoundary().getWidth() / 4), y + spaceship.getBoundary().getMinY() + (spaceship.getBoundary().getHeight() / 4));
-                //b.setVelocity(accelx, accely);
                 bullets.add(b);
+
                 lastShoot = System.nanoTime();
             }
         }
@@ -165,6 +185,14 @@ public class Main extends Application {
                     asteroids.remove(a);
                 }
             }
+        }
+
+        for (Asteroid a : asteroids) {
+                if (a.intersects(spaceship)) {
+                    asteroids.remove(a);
+                    spaceship.setPosition(WIDTH / 2 - spaceship.getBoundary().getWidth() / 2, HEIGHT / 2 - spaceship.getBoundary().getHeight() / 2);
+                    lives--;
+                }
         }
 
         for (Bullet b : bullets) {
@@ -188,6 +216,15 @@ public class Main extends Application {
             wrapSprite(a);
         }
         wrapSprite(spaceship);
+
+        String pointsText = "Lives: " + lives;
+        Font theFont = Font.font( "Helvetica", FontWeight.BOLD, 24 );
+        graphicsContext.setFont( theFont );
+        graphicsContext.setStroke( Color.BLACK );
+        graphicsContext.setLineWidth(1);
+        graphicsContext.setFill( Color.BLUE );
+        graphicsContext.fillText( pointsText, WIDTH-100, HEIGHT-15);
+        graphicsContext.strokeText( pointsText, WIDTH-100, HEIGHT-15 );
 
 
         lastLoop = System.nanoTime();
