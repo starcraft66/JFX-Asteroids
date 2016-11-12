@@ -28,6 +28,7 @@ public class Main extends Application {
     static int HEIGHT = 600;
 
     static HashSet<String> currentlyActiveKeys;
+    static Image background;
 
     static int ASTEROIDS = 10;
     static CopyOnWriteArrayList<Asteroid> asteroids;
@@ -54,6 +55,8 @@ public class Main extends Application {
 
         Canvas canvas = new Canvas( WIDTH, HEIGHT );
         root.getChildren().add( canvas );
+
+        background = new Image("file:assets/bg.jpg");
 
         graphicsContext = canvas.getGraphicsContext2D();
 
@@ -107,6 +110,9 @@ public class Main extends Application {
             public void handle(long currentNanoTime)
             {
                 double t = (currentNanoTime - lastLoop) / 1000000000.0;
+                if ( t > 0.02) {
+                    System.out.println("lag : " + t);
+                }
                 tickAndRender(t);
             }
         }.start();
@@ -126,7 +132,7 @@ public class Main extends Application {
         // clear canvas
         graphicsContext.clearRect(0, 0, WIDTH, HEIGHT);
         //Render background
-        graphicsContext.drawImage(new Image("file:assets/bg.jpg"), 0, 0);
+        graphicsContext.drawImage(background, 0, 0);
 
         for (Asteroid a : asteroids) {
             a.update(time);
@@ -151,12 +157,10 @@ public class Main extends Application {
         if (currentlyActiveKeys.contains("UP"))
         {
             double radRotation = Math.toRadians(spaceship.getRotation());
-            double x = SPACESHIPACCELL * -Math.cos(radRotation);
-            double y = SPACESHIPACCELL * -Math.sin(radRotation);
+            double x = 10 * -Math.cos(radRotation);
+            double y = 10 * -Math.sin(radRotation);
             //Booster
-            spaceship.setVelocity(x, y);
-        } else {
-            spaceship.setVelocity(0, 0);
+            spaceship.addVelocity(x, y);
         }
 
         if (currentlyActiveKeys.contains("SPACE"))
