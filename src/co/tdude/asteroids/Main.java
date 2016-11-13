@@ -156,11 +156,7 @@ public class Main extends Application {
         }
         if (currentlyActiveKeys.contains("UP"))
         {
-            double radRotation = Math.toRadians(spaceship.getRotation());
-            double x = 10 * -Math.cos(radRotation);
-            double y = 10 * -Math.sin(radRotation);
-            //Booster
-            spaceship.addVelocity(x, y);
+            spaceship.boost();
         }
 
         if (currentlyActiveKeys.contains("SPACE"))
@@ -192,10 +188,11 @@ public class Main extends Application {
         }
 
         for (Asteroid a : asteroids) {
-                if (a.intersects(spaceship)) {
+                if (a.intersects(spaceship) && !spaceship.isInvulnerable()) {
                     asteroids.remove(a);
                     spaceship.setPosition(WIDTH / 2 - spaceship.getBoundary().getWidth() / 2, HEIGHT / 2 - spaceship.getBoundary().getHeight() / 2);
                     lives--;
+                    spaceship.kill();
                 }
         }
 
